@@ -1,0 +1,87 @@
+CREATE DATABASE switchmart;
+
+USE switchmart;
+
+CREATE TABLE users (
+    user_id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(15),
+    location VARCHAR(255),
+    rating DECIMAL(3,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    profile_photo_url VARCHAR(255) DEFAULT 'assets/images/default-profile.png',
+    bio TEXT,
+    address TEXT,
+    contact_details VARCHAR(255),
+    PRIMARY KEY (user_id)
+);
+CREATE TABLE products (
+    product_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    type ENUM('food', 'electronics', 'clothing', 'other') NOT NULL,
+    d_o_f VARCHAR(255),
+    status ENUM('available', 'sold', 'pending') DEFAULT 'available',
+    requirement TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    image_url VARCHAR(255) DEFAULT 'assets/images/product-placeholder.jpg',
+    PRIMARY KEY (product_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+CREATE TABLE requests (
+    request_id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    item_name VARCHAR(255) NOT NULL,
+    request_type VARCHAR(50) NOT NULL,
+    message TEXT NOT NULL,
+    product_id INT NOT NULL,
+    buyer_id INT NOT NULL,
+    seller_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (request_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (buyer_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (seller_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE messages (
+    message_id INT NOT NULL AUTO_INCREMENT,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    message TEXT NOT NULL,
+    is_read TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (message_id),
+    FOREIGN KEY (sender_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE trades (
+    trade_id INT NOT NULL AUTO_INCREMENT,
+    seller_id INT NOT NULL,
+    buyer_id INT NOT NULL,
+    product_id INT NOT NULL,
+    request_id INT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (trade_id),
+    FOREIGN KEY (seller_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (buyer_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (request_id) REFERENCES requests(request_id) ON DELETE CASCADE
+);
+
+CREATE TABLE ratings (
+    rating_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    rater_id INT NOT NULL,
+    rating DECIMAL(3,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (rating_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (rater_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
