@@ -1,3 +1,6 @@
-/assets/images/profile_photos/
+/assets/images/profile_photos/*
+/assets/images/products/*
 
-/assets/images/products/
+!/assets/images/profile_photos/.gitkeep
+!/assets/images/products/.gitkeep
+
